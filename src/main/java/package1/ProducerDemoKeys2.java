@@ -39,7 +39,7 @@ public class ProducerDemoKeys2 {
                 int st_id = rs.getInt(1);
                 String st_name = rs.getString(2);
                 String st_status = rs.getString(3);
-                String topic = "input_topicc";
+                String topic = "inputt_topicc";
                 String value = st_id + " " + st_name + " " + st_status;
                 String key = Integer.toString(st_id);
                 ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, value);
