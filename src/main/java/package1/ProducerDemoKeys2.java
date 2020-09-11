@@ -34,34 +34,35 @@ public class ProducerDemoKeys2 {
 
             Statement stmt=con.createStatement();
             ResultSet rs=stmt.executeQuery("select * from student_info");
-            while(rs.next())
-                System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
-            int st_id = rs.getInt(1);
-            String st_name= rs.getString(2);
-            String st_status = rs.getString(3);
-            String topic="inputt_topic";
-            String value = st_id+" "+st_name+" "+st_status;
-            String key = Integer.toString(st_id);
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic,key,value );
+            while(rs.next()) {
+                System.out.println(rs.getInt(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
+                int st_id = rs.getInt(1);
+                String st_name = rs.getString(2);
+                String st_status = rs.getString(3);
+                String topic = "input_topicc";
+                String value = st_id + " " + st_name + " " + st_status;
+                String key = Integer.toString(st_id);
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, value);
 
-            logger.info("Keys : "+key); //log the key
+                logger.info("Keys : " + key); //log the key
 
-            //send data - asynchronous
-            producer.send(record, new Callback() {
-                public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                    //executes every time a record is successfully sent or an exception is thrown
-                    if (e == null) {
-                        //record was successfully sent
-                        logger.info("Received new metadata \n" + "Topic:" + recordMetadata.topic()
-                                + "\n" + "Partition:" + recordMetadata.partition() + "\n Offset: " + recordMetadata.offset() + "\n Timestamp" +
-                                recordMetadata.timestamp());
-                    } else {
-                        // e.printStackTrace();
-                        logger.error("Error while producing", e);
+                //send data - asynchronous
+                producer.send(record, new Callback() {
+                    public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                        //executes every time a record is successfully sent or an exception is thrown
+                        if (e == null) {
+                            //record was successfully sent
+                            logger.info("Received new metadata \n" + "Topic:" + recordMetadata.topic()
+                                    + "\n" + "Partition:" + recordMetadata.partition() + "\n Offset: " + recordMetadata.offset() + "\n Timestamp" +
+                                    recordMetadata.timestamp());
+                        } else {
+                            // e.printStackTrace();
+                            logger.error("Error while producing", e);
+                        }
                     }
-                }
-            }).get();  //block the .send() to make it synchronous-don't do this in production!!
+                }).get();  //block the .send() to make it synchronous-don't do this in production!!
 
+            }
             con.close();
         }catch(Exception e){ System.out.println(e);}
 
