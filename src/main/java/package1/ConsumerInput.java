@@ -58,28 +58,31 @@ public class ConsumerInput {
            for(ConsumerRecord<String,String> record : records){
 
                String value = record.value();
+
                String key = record.key();
 
-               String topicOutput = "outputt_topic";
-               ProducerRecord<String, String> recordProd = new ProducerRecord<String, String>(topicOutput,key,value );
+               if(value.contains("Pass")) {
+                   String topicOutput = "outputt_topic";
+                   ProducerRecord<String, String> recordProd = new ProducerRecord<String, String>(topicOutput, key, value);
 
-               logger.info("Keys : "+key); //log the key
+                   logger.info("Keys : " + key); //log the key
 
-               //send data - asynchronous
-               producer.send(recordProd, new Callback() {
-                   public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                       //executes every time a record is successfully sent or an exception is thrown
-                       if (e == null) {
-                           //record was successfully sent
-                           logger.info("Received new metadata \n" + "Topic:" + recordMetadata.topic()
-                                   + "\n" + "Partition:" + recordMetadata.partition() + "\n Offset: " + recordMetadata.offset() + "\n Timestamp" +
-                                   recordMetadata.timestamp());
-                       } else {
-                           // e.printStackTrace();
-                           logger.error("Error while producing", e);
+                   //send data - asynchronous
+                   producer.send(recordProd, new Callback() {
+                       public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                           //executes every time a record is successfully sent or an exception is thrown
+                           if (e == null) {
+                               //record was successfully sent
+                               logger.info("Received new metadata \n" + "Topic:" + recordMetadata.topic()
+                                       + "\n" + "Partition:" + recordMetadata.partition() + "\n Offset: " + recordMetadata.offset() + "\n Timestamp" +
+                                       recordMetadata.timestamp());
+                           } else {
+                               // e.printStackTrace();
+                               logger.error("Error while producing", e);
+                           }
                        }
-                   }
-               }).get();
+                   }).get();
+               }
                logger.info("Key: "+record.key()+", Value: "+record.value());
                logger.info("Partition: "+record.partition()+", Offset: "+record.offset());
 
